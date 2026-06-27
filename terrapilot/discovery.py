@@ -20,7 +20,7 @@ BACKEND_MARKERS = ("_backend.tf", "backend.tf")
 
 @dataclass(frozen=True)
 class Stack:
-    path: str          # repo-relative directory, e.g. terraform/aws/dev/.../datadog
+    path: str          # repo-relative directory, e.g. infra/dev/us-east-1/database/orders
     name: str          # human label (Atlantis name, or the path)
     source: str        # "atlantis" | "scan"
 

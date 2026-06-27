@@ -1,9 +1,9 @@
 """Append-only audit log.
 
 Every state-changing action TerraPilot takes is recorded as one JSON line.
-This is the local audit trail; in a hosted deployment it would ship to
-CloudWatch / Datadog, but the contract (who, what, when, on which stack) is
-identical.
+This is the local audit trail; in a hosted deployment it would ship to a
+central logging pipeline, but the contract (who, what, when, on which stack)
+is identical.
 """
 
 from __future__ import annotations
