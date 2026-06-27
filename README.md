@@ -10,6 +10,19 @@ Prompt  →  AI  →  Terraform  →  Plan  →  Approval  →  Apply
 
 ![TerraPilot end-to-end demo](docs/demo.png)
 
+---
+
+## ✅ Verified live
+
+Not a slide-deck prototype — the pipeline has been run end to end:
+
+- **Real Terraform** — `terraform init/plan/apply` runs against the bundled [`examples/real-repo`](examples/real-repo) (local backend, no cloud, no creds). Dev auto-applies and writes real state; prod is refused until approved, then applies.
+- **Real GitHub PR** — TerraPilot branches → commits the stack's `.tf` → pushes → opens a PR with the plan + policy decision in the body. Example it opened: **[pretush99/terrapilot#2](https://github.com/pretush99/terrapilot/pull/2)**.
+- **Non-bypassable approval gate** — applying a prod change before sign-off is refused *in code*, not by convention.
+- **Slack approval message** — rendered by [`terrapilot/slack.py`](terrapilot/slack.py) and posted to an `#terrapilot` channel (see [Wiring GitHub & Slack](#wiring-github--slack-for-real)).
+
+> Not yet exercised: a real apply against a cloud backend (S3/EKS). The engine just shells out to Terraform, so it follows standard Terraform behavior once your credentials are configured.
+
 The catch every team hits with raw AI + Terraform is **trust**: who lets the model run `apply`? TerraPilot answers that with a non-bypassable policy engine:
 
 | Environment | Behaviour |
@@ -134,6 +147,24 @@ A typical Claude conversation: *"Plan the change to the dev dynamodb stack and s
 ## Configuration
 
 All settings live in `config.yaml` (see `config.example.yaml`) and can be overridden by `TERRAPILOT_*` env vars. Governance lives in `policy.yaml`: environment matching, auto-apply rules, approvers, and guardrails (max destroys, protected paths, protected resource types).
+
+### Wiring GitHub & Slack for real
+
+Both integrations default to `dry_run: true` (render, don't fire) so nothing happens until you opt in.
+
+**GitHub** — set `github.dry_run: false` and run with authenticated git/`gh` (e.g. `gh auth setup-git`, or an SSH remote, or a bot token in the environment). TerraPilot opens PRs against `github.repo` for prod changes. Auth is ambient — TerraPilot never handles tokens itself.
+
+**Slack** — create an [incoming webhook](https://api.slack.com/messaging/webhooks) for your channel, then:
+
+```yaml
+slack:
+  enabled: true
+  webhook_url: "https://hooks.slack.com/services/XXX/YYY/ZZZ"
+  channel: "#terrapilot"
+  dry_run: false
+```
+
+On every prod `propose_change`, TerraPilot will `POST` the approval message (the one rendered in `slack.py`) straight into the channel.
 
 ---
 
