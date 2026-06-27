@@ -2,7 +2,13 @@
 
 **An AI-native, policy-governed Terraform automation server — the in-house Atlantis, driven over MCP.**
 
-TerraPilot lets an AI assistant (Claude, via the [Model Context Protocol](https://modelcontextprotocol.io)) take a natural-language request and turn it into a *safe, governed* infrastructure change:
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)
+![MCP](https://img.shields.io/badge/MCP-server-8A2BE2.svg)
+![Terraform](https://img.shields.io/badge/Terraform-ready-844FBA.svg)
+![Status](https://img.shields.io/badge/status-verified%20live-1a7f37.svg)
+
+Let an AI assistant (Claude, via the [Model Context Protocol](https://modelcontextprotocol.io)) take a plain-English request and turn it into a *safe, governed* infrastructure change — **AI for speed, humans for the blast radius.**
 
 ```
 Prompt  →  AI  →  Terraform  →  Plan  →  Approval  →  Apply
@@ -20,6 +26,10 @@ Not a slide-deck prototype — the pipeline has been run end to end:
 - **Real GitHub PR** — TerraPilot branches → commits the stack's `.tf` → pushes → opens a PR with the plan + policy decision in the body. Example it opened: **[pretush99/terrapilot#2](https://github.com/pretush99/terrapilot/pull/2)**.
 - **Non-bypassable approval gate** — applying a prod change before sign-off is refused *in code*, not by convention.
 - **Slack approval message** — rendered by [`terrapilot/slack.py`](terrapilot/slack.py) and posted to an `#terrapilot` channel (see [Wiring GitHub & Slack](#wiring-github--slack-for-real)).
+
+The actual PR TerraPilot opened for a prod change:
+
+![Real PR opened by TerraPilot](docs/pr.png)
 
 > Not yet exercised: a real apply against a cloud backend (S3/EKS). The engine just shells out to Terraform, so it follows standard Terraform behavior once your credentials are configured.
 

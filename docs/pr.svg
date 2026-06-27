@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="650" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif" font-size="15">
+  <!-- page -->
+  <rect x="0" y="0" width="920" height="650" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="919" height="649" fill="none" stroke="#d0d7de"/>
+
+  <!-- repo + title -->
+  <text x="32" y="44" fill="#656d76" font-size="15">pretush99 / terrapilot</text>
+  <text x="32" y="84" fill="#1f2328" font-size="26" font-weight="600">[TerraPilot] env/prod/hello: Plan: 1 to add, 1 to destroy <tspan fill="#656d76" font-weight="400">#2</tspan></text>
+
+  <!-- open badge + meta -->
+  <rect x="32" y="104" width="92" height="30" rx="15" fill="#1a7f37"/>
+  <circle cx="50" cy="119" r="5" fill="none" stroke="#ffffff" stroke-width="2"/>
+  <line x1="50" y1="124" x2="50" y2="132" stroke="#ffffff" stroke-width="2"/>
+  <text x="64" y="124" fill="#ffffff" font-size="14" font-weight="600">Open</text>
+  <text x="138" y="124" fill="#656d76" font-size="14"><tspan fill="#1f2328" font-weight="600">pretush99</tspan> wants to merge 1 commit into <tspan font-family="monospace" fill="#0969da">main</tspan> from <tspan font-family="monospace" fill="#0969da">terrapilot/cr-…</tspan></text>
+
+  <line x1="0" y1="152" x2="920" y2="152" stroke="#d0d7de"/>
+
+  <!-- comment card -->
+  <rect x="32" y="176" width="856" height="404" rx="8" fill="#ffffff" stroke="#d0d7de"/>
+  <rect x="32" y="176" width="856" height="44" rx="8" fill="#f6f8fa"/>
+  <rect x="32" y="200" width="856" height="20" fill="#f6f8fa"/>
+  <circle cx="56" cy="198" r="12" fill="#8A2BE2"/>
+  <text x="56" cy="198" y="203" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle">TP</text>
+  <text x="78" y="203" fill="#1f2328" font-size="14"><tspan font-weight="600">terrapilot-bot</tspan> <tspan fill="#656d76">opened this pull request — automated change request</tspan></text>
+
+  <!-- body -->
+  <text x="56" y="256" fill="#1f2328" font-size="19" font-weight="700">TerraPilot change request</text>
+  <text x="56" y="288" fill="#1f2328"><tspan font-weight="600">Stack:</tspan> <tspan font-family="monospace" fill="#0550ae">env/prod/hello</tspan></text>
+  <text x="56" y="312" fill="#1f2328"><tspan font-weight="600">Environment:</tspan> <tspan font-family="monospace" fill="#cf222e">prod</tspan></text>
+
+  <text x="56" y="348" fill="#1f2328" font-size="16" font-weight="700">Plan summary</text>
+  <rect x="56" y="360" width="808" height="34" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="68" y="382" font-family="monospace" fill="#1f2328" font-size="14">Plan: 1 to add, 0 to change, 1 to destroy.</text>
+
+  <text x="56" y="426" fill="#1f2328" font-size="16" font-weight="700">Policy decision</text>
+  <text x="68" y="450" fill="#1f2328" font-size="14">•  prod: environment policy requires sign-off</text>
+
+  <text x="56" y="486" fill="#1f2328" font-size="16" font-weight="700">Plan detail</text>
+  <rect x="56" y="498" width="808" height="34" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="68" y="520" font-family="monospace" fill="#cf222e" font-size="14">-  local_file.greeting</text>
+
+  <rect x="56" y="548" width="808" height="2" fill="#d0d7de"/>
+
+  <!-- footer note -->
+  <text x="32" y="612" fill="#656d76" font-size="13.5">Opened automatically by TerraPilot's prod approval gate — apply is blocked until a lead signs off (merge / approve).</text>
+  <text x="32" y="634" fill="#656d76" font-size="13.5">1 commit · 1 file changed · github.com/pretush99/terrapilot/pull/2</text>
+</svg>
