@@ -1,0 +1,15 @@
+# Synthetic Atlantis project file used by TerraPilot's tests/demo.
+# Mirrors the real-world layout (projects map 1:1 to stack directories).
+version: 3
+automerge: false
+projects:
+  - name: example-dynamodb-dev
+    dir: terraform/aws/dev/us-east-1/dev/dynamodb/example-table
+    autoplan:
+      enabled: true
+      when_modified: ['*.tf']
+  - name: example-iam-dev
+    dir: terraform/aws/dev/us-east-1/dev/iam/example-role
+    autoplan:
+      enabled: true
+      when_modified: ['*.tf']

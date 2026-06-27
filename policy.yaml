@@ -1,0 +1,54 @@
+# TerraPilot policy — the heart of the governance model.
+# Declarative, env-aware, and enforced in code (see terrapilot/policy.py).
+# The first environment whose match_paths matches the stack path wins, so
+# order matters: most-restrictive (prod) first.
+
+environments:
+  - name: prod
+    # Any of these substrings in the stack path classifies it as prod.
+    match_paths: ["/prod/", "terraform/aws/prod", "terraform/vault/prod"]
+    auto_apply: false          # prod NEVER auto-applies
+    require_approval: true      # human sign-off is mandatory
+    open_pr: true               # open a GitHub PR with the plan
+    notify_slack: true          # post a Slack approval request
+    approvers: ["your-org/infra-leads"]
+    approval_ttl_minutes: 120   # approval token expires after this
+
+  - name: dev
+    match_paths: ["/dev/", "terraform/aws/dev", "terraform/vault/dev"]
+    auto_apply: true            # dev auto-applies once gates pass
+    require_approval: false
+    open_pr: false
+    notify_slack: false
+    approvers: []
+    approval_ttl_minutes: 60
+
+# Fallback when no environment matches: treat as the most restrictive.
+default_environment: prod
+
+# Guardrails apply to EVERY environment and can escalate or block an action,
+# even one an environment would otherwise auto-apply.
+guardrails:
+  # If a plan in an auto-apply env destroys more than this many resources,
+  # escalate it to manual approval instead of auto-applying.
+  max_destroy_auto: 0
+
+  # Path globs that always require approval (escalate dev -> manual).
+  protected_paths:
+    - "**/eks/cluster*"
+    - "**/_backend*"
+    - "**/iam/**"
+    - "**/route53/**"
+
+  # Resource types that are dangerous to destroy/replace. A destroy or
+  # replace of any of these blocks the action outright (in any env).
+  protected_resource_types:
+    - aws_db_instance
+    - aws_rds_cluster
+    - aws_rds_cluster_instance
+    - aws_s3_bucket
+    - aws_kms_key
+    - aws_dynamodb_table
+    - aws_eks_cluster
+
+  block_on_protected_destroy: true

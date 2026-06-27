@@ -1,0 +1,45 @@
+# TerraPilot configuration. Copy to config.yaml and edit.
+# Every value can also be overridden by an environment variable (see terrapilot/config.py).
+
+# Absolute path to the Terraform repo TerraPilot operates on.
+# Point this at your IaC monorepo. The bundled fixture is used for the demo.
+repo_path: "./tests/fixtures/repo"
+
+# AWS profile passed to terraform (matches `var.profile` in the stacks).
+aws_profile: "default"
+
+# Terraform binary + the version Atlantis pins. A mismatch only warns.
+terraform_binary: "terraform"
+terraform_version: "1.14.3"
+
+# Where TerraPilot keeps plans, change-requests and the audit log.
+# Relative paths are resolved against this project directory.
+state_dir: ".terrapilot"
+
+# Mock mode runs the full pipeline WITHOUT invoking terraform or touching AWS.
+# Use it for demos, CI and offline development. Set false for real plans/applies.
+mock_mode: true
+
+# Who TerraPilot records as the actor in the audit log when not supplied.
+actor: "terrapilot-bot"
+
+github:
+  enabled: true
+  # The repo PRs are opened against (owner/name). Informational in dry_run.
+  repo: "your-org/your-iac-repo"
+  base_branch: "main"
+  # Reviewers/teams requested on prod PRs (CODEOWNERS still governs merge).
+  reviewers: ["your-org/infra-leads"]
+  # dry_run renders the branch/commit/PR it WOULD create without pushing.
+  # Keep true until you have a dedicated bot token + branch protection.
+  dry_run: true
+
+slack:
+  enabled: true
+  # Incoming-webhook URL OR leave blank to run in "draft" mode (renders only).
+  webhook_url: ""
+  channel: "#infra-approvals"
+  # dry_run renders the message instead of posting it.
+  dry_run: true
+
+policy_file: "policy.yaml"

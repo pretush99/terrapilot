@@ -1,0 +1,8 @@
+# Synthetic Atlantis project file used by TerraPilot's tests/demo (prod).
+version: 3
+automerge: false
+projects:
+  - name: example-s3-logs-prod
+    dir: terraform/aws/prod/us-east-1/prod/s3/example-logs
+  - name: example-rds-prod
+    dir: terraform/aws/prod/us-east-1/prod/rds/example-db

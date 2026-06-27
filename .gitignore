@@ -1,0 +1,24 @@
+# TerraPilot runtime state (plans, approvals, audit) — never commit
+.terrapilot/
+*.tfplan
+*.tfplan.json
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+dist/
+build/
+
+# Local config / secrets — copy from config.example.yaml
+config.yaml
+.env
