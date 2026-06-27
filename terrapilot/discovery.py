@@ -43,8 +43,9 @@ def _from_atlantis(repo: Path) -> dict[str, Stack]:
             if not isinstance(d, str):
                 continue
             d = d.strip().lstrip("./")
-            # The anchor/default entry uses a non-path placeholder (contains "->").
-            if not d.startswith("terraform/") or "->" in d:
+            # Skip the anchor/default entry (a non-path placeholder containing "->")
+            # and anything that isn't a plain relative directory path.
+            if not d or "->" in d or d.startswith("/"):
                 continue
             name = proj.get("name") or d
             stacks[d] = Stack(path=d, name=str(name), source="atlantis")

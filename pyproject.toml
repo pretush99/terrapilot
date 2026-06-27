@@ -5,7 +5,7 @@ description = "TerraPilot — an AI-native, policy-governed Terraform automation
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Platform / DevOps" }]
-license = { text = "Proprietary" }
+license = { text = "MIT" }
 dependencies = [
     "fastmcp>=2.3.0",
     "pyyaml>=6.0",

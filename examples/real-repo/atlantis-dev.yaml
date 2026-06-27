@@ -1,0 +1,10 @@
+# Real (cloud-free) example repo for proving TerraPilot runs actual Terraform.
+# Uses the hashicorp/local provider + a local backend — no AWS, no credentials.
+version: 3
+automerge: false
+projects:
+  - name: hello-dev
+    dir: env/dev/hello
+    autoplan:
+      enabled: true
+      when_modified: ['*.tf']

@@ -8,6 +8,8 @@ TerraPilot lets an AI assistant (Claude, via the [Model Context Protocol](https:
 Prompt  →  AI  →  Terraform  →  Plan  →  Approval  →  Apply
 ```
 
+![TerraPilot end-to-end demo](docs/demo.png)
+
 The catch every team hits with raw AI + Terraform is **trust**: who lets the model run `apply`? TerraPilot answers that with a non-bypassable policy engine:
 
 | Environment | Behaviour |
@@ -58,9 +60,22 @@ git clone https://github.com/pretush99/terrapilot.git && cd terrapilot
 # Register with Claude Code
 claude mcp add terrapilot -- "$(pwd)/.venv/bin/python" -m terrapilot.server
 
-# Or see it run end-to-end immediately (mock mode, no AWS needed)
+# See it run end-to-end immediately (mock mode, no AWS needed)
 make demo
 ```
+
+### Run it for real — no cloud, no credentials
+
+TerraPilot ships with a **real** (cloud-free) example under `examples/real-repo` that uses the `hashicorp/local` provider and a local backend. This runs genuine `terraform init/plan/apply` — proving the engine is real, not mocked:
+
+```bash
+TERRAPILOT_REPO_PATH="$(pwd)/examples/real-repo" \
+TERRAPILOT_MOCK_MODE=false \
+TERRAPILOT_STATE_DIR=/tmp/tp-real \
+.venv/bin/python -m terrapilot.cli demo
+```
+
+You'll watch a **dev** stack auto-apply and write a real file, a **prod** stack get refused until approved, then apply after sign-off. Swap the example's `local_file` for your real cloud resources and point `repo_path` at your IaC repo to go live.
 
 Point it at your Terraform repo and pick real vs mock in `config.yaml`:
 
@@ -89,9 +104,9 @@ A typical Claude conversation: *"Plan the change to the dev dynamodb stack and s
 
 ---
 
-## The `demo` (what your LinkedIn post shows)
+## The `demo`
 
-`make demo` runs the full pipeline against the configured repo in mock mode:
+`make demo` runs the full pipeline against the configured repo (mock mode, or real with the env vars above):
 
 1. **Discover** stacks from the existing Atlantis config
 2. **Dev** change → auto-applied
@@ -134,7 +149,7 @@ The suite runs against the bundled synthetic repo (`tests/fixtures/repo`) in moc
 
 ## Roadmap: POC → production
 
-This repo is the **Phase 1 POC** — local stdio, runs terraform with your creds. It's architected to graduate:
+Phase 1 is **working today** — local stdio, runs real terraform with your creds. It's architected to graduate:
 
 - **Phase 2 (hosted):** containerize, run as a remote MCP/HTTP server on EKS with an IAM role; replace the JSON store with Postgres; OIDC auth per user.
 - **Phase 3 (enterprise):** real Slack interactive buttons, CODEOWNERS-enforced merge → apply via webhook, OPA/Conftest policy packs, cost estimation (Infracost), drift detection.

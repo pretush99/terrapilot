@@ -22,3 +22,7 @@ build/
 # Local config / secrets — copy from config.example.yaml
 config.yaml
 .env
+
+# Example real-repo generated artifacts
+examples/real-repo/**/greeting.txt
+examples/real-repo/**/.terraform.lock.hcl

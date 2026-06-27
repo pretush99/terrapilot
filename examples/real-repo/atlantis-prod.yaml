@@ -1,0 +1,6 @@
+# Prod side of the cloud-free example repo (governed: requires sign-off).
+version: 3
+automerge: false
+projects:
+  - name: hello-prod
+    dir: env/prod/hello
