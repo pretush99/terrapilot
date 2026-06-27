@@ -224,7 +224,16 @@ class TerraPilotEngine:
             branch = f"terrapilot/{cr.id}"
             title = f"[TerraPilot] {s.path}: {plan.summary}"
             body = gh.render_pr_body(s.path, decision.env, plan.summary, decision.reasons, plan_excerpt)
-            pr = gh.open_pr(self.cfg.github, branch=branch, title=title, body=body, request_id=cr.id)
+            pr = gh.open_pr(
+                self.cfg.github,
+                repo_path=self.cfg.repo,
+                branch=branch,
+                title=title,
+                body=body,
+                request_id=cr.id,
+                paths=[s.path],
+                commit_message=f"[TerraPilot] {change_summary or plan.summary} ({s.path})",
+            )
             cr.pr_url = pr.url
             result["pr"] = {"url": pr.url, "created": pr.created, "dry_run": pr.dry_run, "detail": pr.detail}
 

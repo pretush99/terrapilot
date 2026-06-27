@@ -15,6 +15,7 @@ from __future__ import annotations
 import shutil
 import subprocess
 from dataclasses import dataclass
+from pathlib import Path
 
 from .config import GitHubConfig
 
@@ -37,6 +38,10 @@ def gh_available() -> bool:
     return res.returncode == 0
 
 
+def _git(repo: Path, *args: str) -> subprocess.CompletedProcess:
+    return subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True)
+
+
 def render_pr_body(stack: str, env: str, summary: str, reasons: list[str], plan_excerpt: str) -> str:
     reason_lines = "\n".join(f"- {r}" for r in reasons)
     return (
@@ -54,11 +59,22 @@ def render_pr_body(stack: str, env: str, summary: str, reasons: list[str], plan_
 def open_pr(
     cfg: GitHubConfig,
     *,
+    repo_path: Path,
     branch: str,
     title: str,
     body: str,
     request_id: str,
+    paths: list[str],
+    commit_message: str,
 ) -> PRResult:
+    """Open a real PR for the working-tree changes under ``paths``.
+
+    Full flow: branch off the base, commit the stack's changed files, push, and
+    ``gh pr create``. On any failure (including "nothing to commit") it restores
+    the original branch and deletes the throwaway branch, so the working tree is
+    never left in a surprising state. Git/gh auth is ambient (the process env /
+    credential helper) — TerraPilot never handles tokens itself.
+    """
     if cfg.dry_run or not cfg.enabled:
         url = f"https://github.com/{cfg.repo}/pull/DRY-RUN-{request_id}"
         return PRResult(
@@ -72,24 +88,44 @@ def open_pr(
         )
 
     if not gh_available():
-        return PRResult(
-            created=False,
-            dry_run=False,
-            url="",
-            branch=branch,
-            title=title,
-            body=body,
-            detail="gh CLI unavailable or not authenticated; cannot open PR.",
-        )
+        return PRResult(False, False, "", branch, title, body,
+                        detail="gh CLI unavailable or not authenticated; cannot open PR.")
 
-    # Real path: create branch + push + open PR. The caller is responsible for
-    # having committed the .tf changes onto `branch` first.
-    res = subprocess.run(
-        ["gh", "pr", "create", "--title", title, "--body", body, "--base", cfg.base_branch, "--head", branch]
+    repo = Path(repo_path)
+    orig = _git(repo, "rev-parse", "--abbrev-ref", "HEAD").stdout.strip() or cfg.base_branch
+
+    def _fail(detail: str) -> PRResult:
+        # best-effort restore: back to original branch, drop the throwaway branch
+        _git(repo, "checkout", orig)
+        _git(repo, "branch", "-D", branch)
+        return PRResult(False, False, "", branch, title, body, detail=detail)
+
+    cb = _git(repo, "checkout", "-b", branch)
+    if cb.returncode != 0:
+        return PRResult(False, False, "", branch, title, body,
+                        detail=f"could not create branch '{branch}': {cb.stderr.strip()}")
+
+    add = _git(repo, "add", "--", *paths)
+    if add.returncode != 0:
+        return _fail(f"git add failed: {add.stderr.strip()}")
+
+    commit = _git(repo, "commit", "-m", commit_message)
+    if commit.returncode != 0:
+        return _fail("nothing to commit — no working-tree changes under the stack path")
+
+    push = _git(repo, "push", "-u", "origin", branch)
+    if push.returncode != 0:
+        return _fail(f"git push failed: {push.stderr.strip()}")
+
+    pr = subprocess.run(
+        ["gh", "pr", "create", "-R", cfg.repo, "--head", branch, "--base", cfg.base_branch,
+         "--title", title, "--body", body]
         + sum([["--reviewer", r] for r in cfg.reviewers], []),
-        capture_output=True,
-        text=True,
+        cwd=str(repo), capture_output=True, text=True,
     )
-    if res.returncode != 0:
-        return PRResult(False, False, "", branch, title, body, detail=res.stderr.strip())
-    return PRResult(True, False, res.stdout.strip(), branch, title, body)
+    # Always return to the original branch so the working tree is clean.
+    _git(repo, "checkout", orig)
+
+    if pr.returncode != 0:
+        return PRResult(False, False, "", branch, title, body, detail=pr.stderr.strip())
+    return PRResult(True, False, pr.stdout.strip(), branch, title, body)
