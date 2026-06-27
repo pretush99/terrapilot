@@ -14,6 +14,6 @@ terraform {
 # In PROD, applying this requires a lead's sign-off (PR + Slack) — TerraPilot
 # refuses to apply until the change request is approved.
 resource "local_file" "greeting" {
-  content  = "Provisioned by TerraPilot in PROD. Applied only after lead sign-off.\n"
+  content  = "Provisioned by TerraPilot in PROD. Applied only after lead sign-off. Updated via TerraPilot (governed prod change).\n"
   filename = "${path.module}/greeting.txt"
 }
